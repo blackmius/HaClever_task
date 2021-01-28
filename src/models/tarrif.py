@@ -2,7 +2,7 @@ from tortoise import fields, models
 
 
 class Tarrif(models.Model):
-    """ Tarrif Model """
+    """ Модель тарифа """
 
     id = fields.UUIDField(pk=True)
     cargo_type = fields.ForeignKeyField('models.CargoType')

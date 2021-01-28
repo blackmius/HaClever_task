@@ -2,7 +2,7 @@ from tortoise import fields, models
 
 
 class CargoType(models.Model):
-    """ CargoType model """
+    """ Модель типа груза """
 
     id = fields.IntField(pk=True)
     name = fields.CharField(max_length=256, unique=True,

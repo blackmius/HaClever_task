@@ -20,6 +20,7 @@ router = APIRouter(
 
 @router.get("/", response_model=CargoList_Pydantic)
 async def get_all():
+    """ Получение списка всех грузов """
     cargos = await Cargo.all()
     return [await Cargo_Pydantic.from_model(cargo_obj)
             for cargo_obj in cargos]
@@ -27,6 +28,7 @@ async def get_all():
 
 @router.post("/", response_model=Cargo_Pydantic)
 async def create(cargo: CargoIn_Pydantic):
+    """ Добавление записи о грузе """
     cargo_type = await CargoType.get(name=cargo.cargo_type.value)
 
     tarrif = await Tarrif.get_or_none(date=cargo.date_supplied,
@@ -48,6 +50,7 @@ async def create(cargo: CargoIn_Pydantic):
 @router.get("/{cargo_id}", response_model=Cargo_Pydantic,
             responses={404: {"model": HTTPNotFoundError}})
 async def get_by_id(cargo_id: str):
+    """ Получение груза по его идентификатору """
     cargo_obj = await Cargo.get(id=cargo_id)
     return await Cargo_Pydantic.from_model(cargo_obj)
 
@@ -55,6 +58,7 @@ async def get_by_id(cargo_id: str):
 @router.delete("/{cargo_id}", response_model=Status,
                responses={404: {"model": HTTPNotFoundError}})
 async def delete(cargo_id: str):
+    """ Удаление записи о грузе """
     deleted_count = await Cargo.filter(id=cargo_id).delete()
     if not deleted_count:
         raise HTTPException(

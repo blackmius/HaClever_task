@@ -23,6 +23,9 @@ class Cargo(CargoIn):
 
     @staticmethod
     async def from_model(model: CargoModel) -> 'Cargo':
+        """ Я не смог победить tortoise с его pydantic_model_creator
+            поэтому сделал свой сериализатор в dict, который потом
+            pydantic уже может проверить """
         if isinstance(model.cargo_type, tortoise.queryset.QuerySet):
             cargo_type = await model.cargo_type.first()
         else:

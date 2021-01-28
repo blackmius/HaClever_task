@@ -20,6 +20,7 @@ router = APIRouter(
 
 @router.get("/", response_model=TarrifList_Pydantic)
 async def get_all():
+    """ Получение всех тарифов """
     tarrifes = await Tarrif.all()
     return [await Tarrif_Pydantic.from_model(tarrif_obj)
             for tarrif_obj in tarrifes]
@@ -27,6 +28,7 @@ async def get_all():
 
 @router.post("/", response_model=Tarrif_Pydantic)
 async def create(tarrif: TarrifIn_Pydantic):
+    """ Добавление записи о тарифе """
     cargo_type = await CargoType.get_or_none(name=tarrif.cargo_type.value)
 
     tarrif_values = tarrif.dict(exclude_unset=True)
@@ -39,6 +41,7 @@ async def create(tarrif: TarrifIn_Pydantic):
 @router.get("/{tarrif_id}", response_model=Tarrif_Pydantic,
             responses={404: {"model": HTTPNotFoundError}})
 async def get_by_id(tarrif_id: str):
+    """ Получение тарифа по его идентификатору """
     tarrif_obj = await Tarrif.get(id=tarrif_id)
     return await Tarrif_Pydantic.from_model(tarrif_obj)
 
@@ -46,6 +49,7 @@ async def get_by_id(tarrif_id: str):
 @router.put("/{tarrif_id}", response_model=Tarrif_Pydantic,
             responses={404: {"model": HTTPNotFoundError}})
 async def update(tarrif_id: str, tarrif: TarrifIn_Pydantic):
+    """ Редактирование полей тарифа """
     cargo_type = await CargoType.get(name=tarrif.cargo_type.value)
 
     tarrif_values = tarrif.dict(exclude_unset=True)
@@ -59,6 +63,7 @@ async def update(tarrif_id: str, tarrif: TarrifIn_Pydantic):
 @router.delete("/{tarrif_id}", response_model=Status,
                responses={404: {"model": HTTPNotFoundError}})
 async def delete(tarrif_id: str):
+    """ Удаление записи о тарифе """
     deleted_count = await Tarrif.filter(id=tarrif_id).delete()
     if not deleted_count:
         raise HTTPException(
