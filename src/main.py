@@ -3,12 +3,12 @@ from fastapi import FastAPI
 from tortoise import Tortoise
 from models.cargo_type import CargoType
 
-from api import tarrif, cargo
+from api import tariff, cargo
 
 app = FastAPI(title="Haclever task")
 
 
-app.include_router(tarrif.router)
+app.include_router(tariff.router)
 app.include_router(cargo.router)
 
 

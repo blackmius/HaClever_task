@@ -1,10 +1,10 @@
 from tortoise import fields, models
 
 
-class Tarrif(models.Model):
+class Tariff(models.Model):
     """ Модель тарифа """
 
     id = fields.UUIDField(pk=True)
     cargo_type = fields.ForeignKeyField('models.CargoType')
-    date = fields.DateField()
+    date = fields.DateField(index=True)
     rate = fields.FloatField()

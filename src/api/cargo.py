@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from models.tarrif import Tarrif
+from models.tariff import Tariff
 from models.cargo import Cargo
 from models.cargo_type import CargoType
 
@@ -31,13 +31,21 @@ async def create(cargo: CargoIn_Pydantic):
     """ Добавление записи о грузе """
     cargo_type = await CargoType.get(name=cargo.cargo_type.value)
 
-    tarrif = await Tarrif.get_or_none(date=cargo.date_supplied,
-                                      cargo_type=cargo_type)
-    if tarrif is None:
+    # Найти по дате
+    # tarrif = await Tarrif.get_or_none(date=cargo.date_supplied,
+    #                                   cargo_type=cargo_type)
+
+    # Последний активный тариф
+    tariff = (
+        await Tariff.filter(cargo_type=cargo_type)
+        .order_by('date')
+        .first()
+    )
+    if tariff is None:
         raise HTTPException(
             status_code=404, detail="Tarrif for specified cargo not found")
 
-    insurance_price = tarrif.rate * cargo.price
+    insurance_price = tariff.rate * cargo.price
 
     cargo_values = cargo.dict(exclude_unset=True)
     cargo_values['cargo_type'] = cargo_type
@@ -51,7 +59,7 @@ async def create(cargo: CargoIn_Pydantic):
             responses={404: {"model": HTTPNotFoundError}})
 async def get_by_id(cargo_id: str):
     """ Получение груза по его идентификатору """
-    cargo_obj = await Cargo.get(id=cargo_id)
+    cargo_obj = await Cargo.get(id=cargo_id).prefetch_related('cargo_type')
     return await Cargo_Pydantic.from_model(cargo_obj)
 
 

@@ -1,3 +1,3 @@
 from .cargo import Cargo
 from .cargo_type import CargoType
-from .tarrif import Tarrif
+from .tariff import Tariff
