@@ -8,8 +8,6 @@ from .cargo_type import CargoType
 
 from models.tarrif import Tarrif as TarrifModel
 
-import tortoise
-
 
 class TarrifIn(BaseModel):
     cargo_type: CargoType
@@ -25,11 +23,7 @@ class Tarrif(TarrifIn):
         """ Я не смог победить tortoise с его pydantic_model_creator
             поэтому сделал свой сериализатор в dict, который потом
             pydantic уже может проверить """
-        if isinstance(model.cargo_type, tortoise.queryset.QuerySet):
-            cargo_type = await model.cargo_type.first()
-        else:
-            cargo_type = model.cargo_type
-        return Tarrif(id=model.id, cargo_type=cargo_type.name,
+        return Tarrif(id=model.id, cargo_type=model.cargo_type.name,
                       date=model.date, rate=model.rate)
 
 

@@ -21,7 +21,7 @@ router = APIRouter(
 @router.get("/", response_model=CargoList_Pydantic)
 async def get_all():
     """ Получение списка всех грузов """
-    cargos = await Cargo.all()
+    cargos = await Cargo.all().prefetch_related('cargo_type')
     return [await Cargo_Pydantic.from_model(cargo_obj)
             for cargo_obj in cargos]
 

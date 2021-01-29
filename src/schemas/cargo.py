@@ -8,8 +8,6 @@ from .cargo_type import CargoType
 
 from models.cargo import Cargo as CargoModel
 
-import tortoise
-
 
 class CargoIn(BaseModel):
     cargo_type: CargoType
@@ -26,11 +24,7 @@ class Cargo(CargoIn):
         """ Я не смог победить tortoise с его pydantic_model_creator
             поэтому сделал свой сериализатор в dict, который потом
             pydantic уже может проверить """
-        if isinstance(model.cargo_type, tortoise.queryset.QuerySet):
-            cargo_type = await model.cargo_type.first()
-        else:
-            cargo_type = model.cargo_type
-        return Cargo(id=model.id, cargo_type=cargo_type.name,
+        return Cargo(id=model.id, cargo_type=model.cargo_type.name,
                      date_supplied=model.date_supplied, price=model.price,
                      insurance_price=model.insurance_price)
 

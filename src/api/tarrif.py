@@ -21,7 +21,7 @@ router = APIRouter(
 @router.get("/", response_model=TarrifList_Pydantic)
 async def get_all():
     """ Получение всех тарифов """
-    tarrifes = await Tarrif.all()
+    tarrifes = await Tarrif.all().prefetch_related('cargo_type')
     return [await Tarrif_Pydantic.from_model(tarrif_obj)
             for tarrif_obj in tarrifes]
 
